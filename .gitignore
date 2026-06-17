@@ -1,0 +1,13 @@
+# Build artifacts de .NET
+bin/
+obj/
+out/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+
+# Sistema
+.DS_Store

@@ -1,0 +1,106 @@
+### Truck & Roll API - Pruebas de endpoints (REST Client de VS Code)
+###
+### Cómo usar: instalar la extensión "REST Client" en VS Code, levantar la API
+### (ver README) y hacer clic en "Send Request" sobre cada bloque.
+### Alternativa: Swagger UI en http://localhost:5080/swagger
+
+@host = http://localhost:5080
+
+
+### 0. Salud de la API
+GET {{host}}/
+
+
+### 1. Soporte de "Crear Pedido": ver el menú para armar el pedido
+GET {{host}}/menu
+
+
+### 2. "Crear Pedido": crear un pedido
+# Guardá el "numero" que devuelve para usarlo en los pasos siguientes.
+POST {{host}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [
+    { "productoId": "2", "cantidad": 1 },
+    { "productoId": "3", "cantidad": 2 },
+    { "productoId": "4", "cantidad": 1 }
+  ],
+  "nombreCliente": "Facundo",
+  "nota": "Sin tomate en la hamburguesa"
+}
+
+
+### 3. "Estado de Pedidos": listar todos los pedidos
+GET {{host}}/pedidos
+
+
+### 4. "Estado de Pedidos": listar solo los pedidos en preparación
+GET {{host}}/pedidos?estado=EN_PREPARACION
+
+
+### 5. "Estado de Pedidos": ver un pedido puntual (ajustá el número)
+GET {{host}}/pedidos/1
+
+
+### 6. "Estado de Pedidos": avanzar el pedido #1 a EN_PREPARACION
+PATCH {{host}}/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "EN_PREPARACION" }
+
+
+### 7. "Estado de Pedidos": avanzar el pedido #1 a LISTO
+PATCH {{host}}/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "LISTO" }
+
+
+### 8. "Estado de Pedidos": marcar el pedido #1 como ENTREGADO
+PATCH {{host}}/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "ENTREGADO" }
+
+
+### 9. (Demo de validación) Transición inválida: saltar de REGISTRADO a ENTREGADO
+# Creá primero un pedido nuevo (queda en REGISTRADO) e intentá saltarlo.
+# La máquina de estados lo rechaza con HTTP 409.
+PATCH {{host}}/pedidos/2/estado
+Content-Type: application/json
+
+{ "estado": "ENTREGADO" }
+
+
+### 10. (Demo de validación) Producto inexistente -> HTTP 404
+POST {{host}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [ { "productoId": "no_existe", "cantidad": 1 } ]
+}
+
+
+### 11. Vista frontend: menu con campos del prototipo Figma Make
+GET {{host}}/frontend/menu
+
+
+### 12. Vista frontend: crear pedido con product.id y campos en ingles
+POST {{host}}/frontend/pedidos
+Content-Type: application/json
+
+{
+  "customerName": "Facundo",
+  "nickname": "Zorro",
+  "note": "Retira en mostrador",
+  "items": [
+    { "product": { "id": "2" }, "quantity": 1 },
+    { "product": { "id": "3" }, "quantity": 1 },
+    { "productId": "4", "quantity": 1 }
+  ]
+}
+
+
+### 13. Vista frontend: estado de pedidos
+GET {{host}}/frontend/pedidos
